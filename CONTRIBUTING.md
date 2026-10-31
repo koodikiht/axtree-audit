@@ -7,7 +7,7 @@
 
 1. **No external runtime dependencies**: Do not add third-party packages to `"dependencies"` in `package.json`. Protocol clients and tree analyzers must rely on standard `fetch`, `WebSocket`, and built-in Node/Bun modules.
 2. **Out-of-band inspection**: Do not inject DOM mutation scripts into target pages. All accessibility and privacy checks must operate on protocol-level `AXNode` trees and network event streams so pages with strict `Content-Security-Policy` headers can be audited without modification.
-3. **REUSE 3.2 licensing**: Every source file must start with `SPDX-FileCopyrightText` and `SPDX-License-Identifier: MIT`.
+3. **REUSE 3.3 licensing**: Every source file must start with standard SPDX copyright and `MIT` license headers.
 
 ## Generative AI Policy (Code Provenance & Copyright Hygiene)
 
