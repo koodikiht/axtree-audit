@@ -5,8 +5,10 @@
 
 **Out-of-band CDP Accessibility Tree (`AXTree`) `WCAG 2.2` verifier and third-party telemetry inspector (`W3C EARL 1.0 JSON-LD` & `SARIF v2.1.0`).**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/koodikiht/axtree-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/koodikiht/axtree-audit/actions/workflows/ci.yml)
+[![SLSA Build Level 3](https://img.shields.io/badge/SLSA-Build%20Level%203-brightgreen)](https://github.com/koodikiht/axtree-audit/attestations)
 [![REUSE status](https://api.reuse.software/badge/github.com/koodikiht/axtree-audit)](https://api.reuse.software/info/github.com/koodikiht/axtree-audit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
 
