@@ -13,6 +13,7 @@ interface CDPTargetInfo {
 
 export async function fetchLiveCDPAXTree(
   cdpEndpoint = "http://127.0.0.1:9222",
+  navigateUrl?: string,
 ): Promise<{ pageUrl: string; nodes: RawAXNode[] }> {
   const baseUrl = cdpEndpoint.replace(/\/$/, "");
   const res = await fetch(`${baseUrl}/json/list`);
@@ -21,9 +22,12 @@ export async function fetchLiveCDPAXTree(
   }
 
   const targets = (await res.json()) as CDPTargetInfo[];
-  const pageTarget = targets.find(
+  const pageCandidates = targets.filter(
     (t) => t.type === "page" && t.webSocketDebuggerUrl && !t.url.startsWith("devtools://"),
   );
+  const pageTarget =
+    pageCandidates.find((t) => !t.url.startsWith("chrome://") && t.url !== "about:blank") ??
+    pageCandidates[0];
 
   if (!pageTarget || !pageTarget.webSocketDebuggerUrl) {
     throw new Error(`No inspectable page target with webSocketDebuggerUrl found on ${baseUrl}`);
@@ -34,21 +38,36 @@ export async function fetchLiveCDPAXTree(
     const ws = new WebSocket(wsUrl);
     const timer = setTimeout(() => {
       ws.close();
-      reject(new Error(`CDP WebSocket timeout after 8000ms (${wsUrl})`));
-    }, 8000);
+      reject(new Error(`CDP WebSocket timeout after 15000ms (${wsUrl})`));
+    }, 15000);
 
     ws.addEventListener("open", () => {
       ws.send(JSON.stringify({ id: 1, method: "Accessibility.enable", params: {} }));
-      ws.send(JSON.stringify({ id: 2, method: "Accessibility.getFullAXTree", params: {} }));
+      if (navigateUrl) {
+        ws.send(JSON.stringify({ id: 10, method: "Page.enable", params: {} }));
+        ws.send(JSON.stringify({ id: 11, method: "Page.navigate", params: { url: navigateUrl } }));
+      } else {
+        ws.send(JSON.stringify({ id: 2, method: "Accessibility.getFullAXTree", params: {} }));
+      }
     });
+
+    let requestedTree = !navigateUrl;
 
     ws.addEventListener("message", (ev) => {
       try {
         const msg = JSON.parse(String(ev.data)) as {
           id?: number;
+          method?: string;
           result?: { nodes?: RawAXNode[] };
           error?: { message?: string };
         };
+        if (navigateUrl && !requestedTree && msg.method === "Page.loadEventFired") {
+          requestedTree = true;
+          setTimeout(() => {
+            ws.send(JSON.stringify({ id: 2, method: "Accessibility.getFullAXTree", params: {} }));
+          }, 1200);
+          return;
+        }
         if (msg.id === 2) {
           clearTimeout(timer);
           ws.close();
@@ -57,7 +76,7 @@ export async function fetchLiveCDPAXTree(
             return;
           }
           resolve({
-            pageUrl: pageTarget.url,
+            pageUrl: navigateUrl ?? pageTarget.url,
             nodes: msg.result?.nodes ?? [],
           });
         }

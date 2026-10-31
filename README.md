@@ -60,7 +60,7 @@ Requires `bun >= 1.1` (or `node >= 22.6` with `--experimental-strip-types`). No 
 bun test
 
 # Audit a live browser tab over CDP and print the computed semantic AXTree + WCAG findings
-bun run src/cli.ts live --cdp http://127.0.0.1:9222
+bun run src/cli.ts live --cdp http://127.0.0.1:9222 --url https://example.org
 
 # Audit a saved AXTree + network snapshot and export W3C EARL 1.0 JSON-LD
 bun run src/cli.ts scan snapshot.json --format earl > report.earl.json
