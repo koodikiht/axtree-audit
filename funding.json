@@ -5,9 +5,10 @@
     "role": "maintainer",
     "name": "Mark (malfunctionAI)",
     "email": "contact@koodikiht.dev",
-    "description": "Systems and security engineer building protocol-level web accessibility and privacy auditing tools in Tallinn, Estonia.",
+    "description": "Systems and security engineer building protocol-level web accessibility, privacy, and binary provenance auditing tools in Tallinn, Estonia.",
     "webpageUrl": {
-      "url": "https://koodikiht.dev"
+      "url": "https://koodikiht.dev",
+      "wellKnown": "https://koodikiht.dev/.well-known/funding-manifest-urls"
     }
   },
   "projects": [
@@ -16,13 +17,30 @@
       "name": "axtree-audit",
       "description": "Out-of-band CDP Accessibility Tree (AXTree) WCAG 2.2 verifier and third-party telemetry inspector (SARIF v2.1.0 and W3C EARL).",
       "webpageUrl": {
-        "url": "https://github.com/koodikiht/axtree-audit"
+        "url": "https://github.com/koodikiht/axtree-audit",
+        "wellKnown": "https://github.com/koodikiht/axtree-audit/blob/main/.well-known/funding-manifest-urls"
       },
       "repositoryUrl": {
-        "url": "https://github.com/koodikiht/axtree-audit"
+        "url": "https://github.com/koodikiht/axtree-audit",
+        "wellKnown": "https://github.com/koodikiht/axtree-audit/blob/main/.well-known/funding-manifest-urls"
       },
       "licenses": ["spdx:MIT"],
-      "tags": ["accessibility", "wcag", "w3c-earl", "privacy", "cdp", "webdriver-bidi"]
+      "tags": ["accessibility", "wcag", "w3c-earl", "privacy", "cdp", "webdriver-bidi", "developer-tools", "cli", "browser", "testing"]
+    },
+    {
+      "guid": "bundle-provenance",
+      "name": "bundle-provenance",
+      "description": "Post-build binary and client bundle supply-chain auditor (Electron Fuses, ASAR Pickle, SourceMap v3, PurlDB and CycloneDX v1.6).",
+      "webpageUrl": {
+        "url": "https://github.com/koodikiht/bundle-provenance",
+        "wellKnown": "https://github.com/koodikiht/bundle-provenance/blob/main/.well-known/funding-manifest-urls"
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/koodikiht/bundle-provenance",
+        "wellKnown": "https://github.com/koodikiht/bundle-provenance/blob/main/.well-known/funding-manifest-urls"
+      },
+      "licenses": ["spdx:MIT"],
+      "tags": ["security", "sbom", "supply-chain", "cyclonedx", "purl", "electron", "developer-tools", "cli", "auditing"]
     }
   ],
   "funding": {
@@ -42,6 +60,26 @@
         "description": "Extending protocol-level AXTree auditing to Firefox/Servo WebDriver BiDi, keyboard focus-order state machines, and EN 301 549 / WCAG 2.2 conformance reports.",
         "amount": 22400,
         "currency": "EUR",
+        "frequency": "one-time",
+        "channels": ["bank-sepa"]
+      },
+      {
+        "guid": "floss-sustainability",
+        "status": "active",
+        "name": "Long-term browser protocol and ACT-Rules maintenance",
+        "description": "Continuous maintenance across Chromium CDP and Firefox WebDriver BiDi protocol updates, WCAG 2.2 ACT-Rules mapping, and distro packaging.",
+        "amount": 10000,
+        "currency": "USD",
+        "frequency": "yearly",
+        "channels": ["bank-sepa"]
+      },
+      {
+        "guid": "floss-core-grant",
+        "status": "active",
+        "name": "Protocol accessibility and binary provenance verification suite",
+        "description": "Unrestricted support for out-of-band WebDriver BiDi accessibility auditing and post-build supply-chain provenance tooling.",
+        "amount": 25000,
+        "currency": "USD",
         "frequency": "one-time",
         "channels": ["bank-sepa"]
       }
