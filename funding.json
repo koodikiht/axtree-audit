@@ -5,7 +5,7 @@
     "role": "maintainer",
     "name": "Mark (malfunctionAI)",
     "email": "contact@koodikiht.dev",
-    "description": "Systems & security engineer building protocol-level web accessibility and privacy auditing tools in Tallinn, Estonia.",
+    "description": "Systems and security engineer building protocol-level web accessibility and privacy auditing tools in Tallinn, Estonia.",
     "webpageUrl": {
       "url": "https://koodikiht.dev"
     }
@@ -14,7 +14,7 @@
     {
       "guid": "axtree-audit",
       "name": "axtree-audit",
-      "description": "Out-of-band CDP Accessibility Tree (AXTree) WCAG 2.2 verifier and third-party telemetry inspector (SARIF v2.1.0 & W3C EARL).",
+      "description": "Out-of-band CDP Accessibility Tree (AXTree) WCAG 2.2 verifier and third-party telemetry inspector (SARIF v2.1.0 and W3C EARL).",
       "webpageUrl": {
         "url": "https://github.com/koodikiht/axtree-audit"
       },
@@ -38,7 +38,7 @@
       {
         "guid": "core-development",
         "status": "active",
-        "name": "Cross-engine WebDriver BiDi AXTree & European Accessibility Act (EAA) verification suite",
+        "name": "Cross-engine WebDriver BiDi AXTree and European Accessibility Act (EAA) verification suite",
         "description": "Extending protocol-level AXTree auditing to Firefox/Servo WebDriver BiDi, keyboard focus-order state machines, and EN 301 549 / WCAG 2.2 conformance reports.",
         "amount": 22400,
         "currency": "EUR",
