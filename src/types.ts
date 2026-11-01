@@ -56,6 +56,7 @@ export interface AuditFinding {
   message: string;
   nodeId?: string;
   backendDOMNodeId?: number;
+  selector?: string;
   targetUrl?: string;
 }
 

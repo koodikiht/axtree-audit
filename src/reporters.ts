@@ -81,7 +81,9 @@ export function formatW3CEarl(report: AXAuditReport): string {
           "@type": "TestResult",
           outcome: "earl:failed",
           description: f.message,
-          pointer: f.nodeId ? `axnode:${f.nodeId}` : undefined,
+          pointer: f.nodeId
+            ? `axnode:${f.nodeId}${f.backendDOMNodeId ? ` (backendDOMNodeId:${f.backendDOMNodeId}${f.selector ? `, selector:${f.selector}` : ""})` : ""}`
+            : f.targetUrl,
         },
       })),
     ],

@@ -13,6 +13,7 @@ export interface SnapshotInput {
   url?: string;
   nodes: RawAXNode[];
   network?: NetworkEntry[];
+  selectors?: Record<number, string>;
 }
 
 export function auditAXSnapshot(input: SnapshotInput, fallbackTarget = "snapshot.json"): AXAuditReport {
@@ -21,6 +22,13 @@ export function auditAXSnapshot(input: SnapshotInput, fallbackTarget = "snapshot
   const netRes = input.network
     ? inspectNetworkPrivacy(target, input.network)
     : { thirdPartyHosts: [], findings: [] };
+
+  const allFindings = [...axRes.findings, ...netRes.findings].map((f) => {
+    if (f.backendDOMNodeId && input.selectors?.[f.backendDOMNodeId] && !f.selector) {
+      return { ...f, selector: input.selectors[f.backendDOMNodeId] };
+    }
+    return f;
+  });
 
   return {
     target,
@@ -31,7 +39,7 @@ export function auditAXSnapshot(input: SnapshotInput, fallbackTarget = "snapshot
     landmarks: axRes.landmarks,
     tree: axRes.roots,
     thirdPartyHosts: netRes.thirdPartyHosts,
-    findings: [...axRes.findings, ...netRes.findings],
+    findings: allFindings,
   };
 }
 
@@ -41,6 +49,7 @@ function printUsage(): void {
 Usage:
   axtree-audit scan <snapshot.json> [--format text|json|sarif|earl] [--no-tree] [--fail-on-high]
   axtree-audit live [--url <https://...>] [--cdp http://127.0.0.1:9222] [--format text|json|sarif|earl] [--no-tree] [--fail-on-high]
+  axtree-audit --live <https://...> [--cdp http://127.0.0.1:9222] [--format text|json|sarif|earl]
   axtree-audit --help
 `);
 }
@@ -52,7 +61,7 @@ if (import.meta.main) {
     process.exit(0);
   }
 
-  const cmd = args[0];
+  let cmd = args[0];
   let format = "text";
   let cdpUrl = "http://127.0.0.1:9222";
   let navUrl: string | undefined;
@@ -62,6 +71,13 @@ if (import.meta.main) {
 
   if (cmd === "scan") {
     snapshotPath = args[1];
+  } else if (cmd === "--live") {
+    cmd = "live";
+    if (args[1] && !args[1].startsWith("--")) {
+      navUrl = args[1];
+    }
+  } else if (cmd === "live" && args[1] && !args[1].startsWith("--")) {
+    navUrl = args[1];
   }
 
   for (let i = 1; i < args.length; i++) {
@@ -69,8 +85,9 @@ if (import.meta.main) {
       format = args[++i];
     } else if (args[i] === "--cdp" && args[i + 1]) {
       cdpUrl = args[++i];
-    } else if (args[i] === "--url" && args[i + 1]) {
+    } else if ((args[i] === "--url" || args[i] === "--live") && args[i + 1]) {
       navUrl = args[++i];
+      cmd = "live";
     } else if (args[i] === "--no-tree") {
       showTree = false;
     } else if (args[i] === "--fail-on-high") {
@@ -86,7 +103,15 @@ if (import.meta.main) {
     report = auditAXSnapshot(input, snapshotPath);
   } else if (cmd === "live") {
     const live = await fetchLiveCDPAXTree(cdpUrl, navUrl);
-    report = auditAXSnapshot({ url: live.pageUrl, nodes: live.nodes }, live.pageUrl);
+    report = auditAXSnapshot(
+      {
+        url: live.pageUrl,
+        nodes: live.nodes,
+        network: live.network,
+        selectors: live.selectors,
+      },
+      live.pageUrl,
+    );
   } else {
     printUsage();
     process.exit(1);
