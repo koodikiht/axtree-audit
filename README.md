@@ -44,10 +44,10 @@ bun test
 
 ## Upstream issues found with `axtree-audit`
 
-| Target | Finding | Issue |
+| Target | Finding | Issue / PR |
 | :--- | :--- | :--- |
-| Gitea / Forgejo | `WCAG-4.1.2-NAME`: Fomantic `.ui.dropdown` widgets in `web_src/js/modules/fomantic/dropdown.ts` set `role="combobox"` without `aria-label` or `aria-labelledby`, computing `name: ""` in the `AXTree`. | [`#40107`](https://github.com/go-gitea/gitea/issues/40107) |
-| Lemmy UI | `WCAG-4.1.2-NAME` / `WCAG-1.1.1-IMG`: `<svg><use>` icons in `src/shared/components/common/icon.tsx` lacked `aria-hidden="true"` (exposing unlabeled `role="image"` nodes across post listings), duplicated `#plus-square-alt` IDs, and left icon-only buttons with `name: ""`. | [`#4368`](https://github.com/LemmyNet/lemmy-ui/issues/4368) |
+| Gitea / Forgejo | `WCAG-4.1.2-NAME`: Fomantic `.ui.dropdown` widgets in `web_src/js/modules/fomantic/dropdown.ts` set `role="combobox"` without `aria-label` or `aria-labelledby`, computing `name: ""` in the `AXTree`. | [`#40107`](https://github.com/go-gitea/gitea/issues/40107) / [`PR #40163`](https://github.com/go-gitea/gitea/pull/40163) |
+| Lemmy UI | `WCAG-4.1.2-NAME` / `WCAG-1.1.1-IMG`: `<svg><use>` icons in `src/shared/components/common/icon.tsx` lacked `aria-hidden="true"` (exposing unlabeled `role="image"` nodes across post listings), duplicated `#plus-square-alt` IDs, and left icon-only buttons with `name: ""`. | [`#4368`](https://github.com/LemmyNet/lemmy-ui/issues/4368) / [`PR #4373`](https://github.com/LemmyNet/lemmy-ui/pull/4373) (merged) |
 
 ## License
 
