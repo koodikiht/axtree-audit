@@ -1,6 +1,6 @@
 {
   "name": "axtree-audit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Out-of-band CDP Accessibility Tree (AXTree) WCAG 2.2 verifier and third-party telemetry inspector (SARIF v2.1.0 and W3C EARL)",
   "license": "MIT",
   "author": "Mark (malfunctionAI) <contact@koodikiht.dev>",

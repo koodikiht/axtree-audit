@@ -45,7 +45,7 @@ export function auditAXSnapshot(input: SnapshotInput, fallbackTarget = "snapshot
 }
 
 function printUsage(): void {
-  console.log(`axtree-audit v0.1.0 - Out-of-band CDP Accessibility Tree (WCAG 2.2) & privacy verifier
+  console.log(`axtree-audit v0.1.1 - Out-of-band CDP Accessibility Tree (WCAG 2.2) & privacy verifier
 
 Usage:
   axtree-audit scan <snapshot.json> [--format text|json|sarif|earl] [--no-tree] [--fail-on-high]

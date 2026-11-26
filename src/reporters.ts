@@ -19,7 +19,7 @@ export function formatSarif(report: AXAuditReport): string {
         tool: {
           driver: {
             name: "axtree-audit",
-            version: "0.1.0",
+            version: "0.1.1",
             informationUri: "https://github.com/koodikiht/axtree-audit",
           },
         },
@@ -59,7 +59,7 @@ export function formatW3CEarl(report: AXAuditReport): string {
         "@id": "#assertor",
         "@type": ["Assertor", "Software"],
         title: "axtree-audit",
-        hasVersion: "0.1.0",
+        hasVersion: "0.1.1",
         homepage: "https://github.com/koodikiht/axtree-audit",
       },
       {
@@ -95,7 +95,7 @@ export function formatW3CEarl(report: AXAuditReport): string {
 
 export function formatTextSummary(report: AXAuditReport, includeTree = true): string {
   const lines: string[] = [];
-  lines.push(`=== axtree-audit v0.1.0 | target: ${report.target} ===`);
+  lines.push(`=== axtree-audit v0.1.1 | target: ${report.target} ===`);
   lines.push(
     `[AXTREE] Raw CDP nodes: ${report.totalRawNodes} -> Semantic nodes: ${report.semanticNodeCount} | Interactive: ${report.interactiveCount}`,
   );
