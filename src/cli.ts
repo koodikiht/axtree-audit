@@ -2,7 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Mark (malfunctionAI) / KoodiKiht
 // SPDX-License-Identifier: MIT
 
-import { readFileSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { buildSemanticAXTree } from "./axtree.ts";
 import { fetchLiveCDPAXTree } from "./cdp.ts";
 import { inspectNetworkPrivacy } from "./privacy.ts";
@@ -54,7 +55,11 @@ Usage:
 `);
 }
 
-if (import.meta.main) {
+const isMain =
+  import.meta.main ??
+  Boolean(process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href);
+
+if (isMain) {
   const args = process.argv.slice(2);
   if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
     printUsage();
@@ -114,7 +119,7 @@ if (import.meta.main) {
     );
   } else {
     printUsage();
-    process.exit(1);
+    throw process.exit(1);
   }
 
   if (format === "sarif") {

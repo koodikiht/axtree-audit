@@ -22,6 +22,8 @@ jobs:
           bun-version: latest
       - name: Run unit tests
         run: bun test
+      - name: Compile standalone binary
+        run: bun build --compile src/cli.ts --outfile /tmp/axtree-audit
       - name: Check external dependency list
         run: |
           deps=$(jq -r '.dependencies // empty' package.json)
