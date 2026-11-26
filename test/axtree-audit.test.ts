@@ -126,4 +126,27 @@ describe("axtree-audit v0.1.0 core verification", () => {
     expect(sarif.version).toBe("2.1.0");
     expect(sarif.runs[0].results.length).toBe(5);
   });
+
+  test("isolates multi-part public suffixes and IPv4 hosts in third-party checks", () => {
+    const govRes = inspectNetworkPrivacy("https://service.gov.uk/apply", [
+      {
+        url: "https://service.gov.uk/apply",
+        resourceType: "Document",
+        responseHeaders: { "content-security-policy": "default-src 'self'" },
+      },
+      { url: "https://static.service.gov.uk/app.js", resourceType: "Script" },
+      { url: "https://collector.other.gov.uk/pixel.gif", resourceType: "Image" },
+    ]);
+    expect(govRes.thirdPartyHosts).toEqual(["collector.other.gov.uk"]);
+
+    const ipRes = inspectNetworkPrivacy("http://127.0.0.1:3000/", [
+      {
+        url: "http://127.0.0.1:3000/",
+        resourceType: "Document",
+        responseHeaders: { "content-security-policy": "default-src 'self'" },
+      },
+      { url: "http://10.0.0.1:9000/collect", resourceType: "Ping" },
+    ]);
+    expect(ipRes.thirdPartyHosts).toEqual(["10.0.0.1"]);
+  });
 });

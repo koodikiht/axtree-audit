@@ -55,10 +55,64 @@ const KNOWN_TRACKER_PATTERNS = [
   /emarsys\.net$/i,
 ];
 
+const MULTI_PART_SUFFIXES = new Set([
+  "co.uk",
+  "org.uk",
+  "gov.uk",
+  "ac.uk",
+  "me.uk",
+  "net.uk",
+  "nhs.uk",
+  "com.au",
+  "net.au",
+  "org.au",
+  "edu.au",
+  "gov.au",
+  "co.nz",
+  "org.nz",
+  "govt.nz",
+  "co.jp",
+  "ne.jp",
+  "or.jp",
+  "go.jp",
+  "ac.jp",
+  "com.br",
+  "org.br",
+  "gov.br",
+  "co.za",
+  "org.za",
+  "gov.za",
+  "gov.ee",
+  "riik.ee",
+  "pri.ee",
+  "com.ee",
+  "fie.ee",
+  "gouv.fr",
+  "gob.es",
+  "gov.pl",
+  "com.pl",
+  "gv.at",
+  "co.at",
+  "or.at",
+]);
+
 function extractRegistrableDomain(hostname: string): string {
-  const parts = hostname.toLowerCase().split(".");
-  if (parts.length <= 2) return hostname.toLowerCase();
-  return parts.slice(-2).join(".");
+  const clean = hostname.toLowerCase().replace(/\.$/, "");
+  if (
+    clean === "localhost" ||
+    clean.startsWith("[") ||
+    clean.includes(":") ||
+    /^\d{1,3}(?:\.\d{1,3}){3}$/.test(clean)
+  ) {
+    return clean;
+  }
+  const parts = clean.split(".");
+  if (parts.length <= 2) return clean;
+  const lastTwo = parts.slice(-2).join(".");
+  if (MULTI_PART_SUFFIXES.has(lastTwo) && parts.length >= 3) {
+    return parts.slice(-3).join(".");
+  }
+  return lastTwo;
 }
 
 export function inspectNetworkPrivacy(
