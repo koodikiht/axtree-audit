@@ -5,7 +5,7 @@ import { describe, expect, test } from "bun:test";
 import { buildSemanticAXTree } from "../src/axtree.ts";
 import { auditAXSnapshot } from "../src/cli.ts";
 import { inspectNetworkPrivacy } from "../src/privacy.ts";
-import { formatSarif, formatW3CEarl } from "../src/reporters.ts";
+import { formatSarif, formatTextSummary, formatW3CEarl } from "../src/reporters.ts";
 import type { RawAXNode } from "../src/types.ts";
 
 const SAMPLE_NODES: RawAXNode[] = [
@@ -116,6 +116,7 @@ describe("axtree-audit v0.1.0 core verification", () => {
     const report = auditAXSnapshot({
       url: "https://portal.example.eu",
       nodes: SAMPLE_NODES,
+      selectors: { 42: "button.menu-trigger" },
     });
 
     const earl = JSON.parse(formatW3CEarl(report));
@@ -125,6 +126,11 @@ describe("axtree-audit v0.1.0 core verification", () => {
     const sarif = JSON.parse(formatSarif(report));
     expect(sarif.version).toBe("2.1.0");
     expect(sarif.runs[0].results.length).toBe(5);
+    const btnFinding = sarif.runs[0].results.find(
+      (r: { ruleId: string }) => r.ruleId === "WCAG-4.1.2-NAME",
+    );
+    expect(btnFinding.properties.selector).toBe("button.menu-trigger");
+    expect(formatTextSummary(report, false)).toContain("selector=button.menu-trigger");
   });
 
   test("isolates multi-part public suffixes and IPv4 hosts in third-party checks", () => {

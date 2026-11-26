@@ -40,6 +40,7 @@ export function formatSarif(report: AXAuditReport): string {
             wcagCriterion: f.wcagCriterion,
             nodeId: f.nodeId,
             backendDOMNodeId: f.backendDOMNodeId,
+            ...(f.selector ? { selector: f.selector } : {}),
           },
         })),
       },
@@ -106,7 +107,9 @@ export function formatTextSummary(report: AXAuditReport, includeTree = true): st
 
   lines.push(`[FINDINGS] Accessibility & privacy issues: ${report.findings.length}`);
   for (const f of report.findings) {
-    const nodeRef = f.nodeId ? ` (nodeId=${f.nodeId})` : "";
+    const nodeRef = f.nodeId
+      ? ` (nodeId=${f.nodeId}${f.selector ? `, selector=${f.selector}` : ""})`
+      : "";
     lines.push(`  - [${f.severity}] ${f.ruleId}: ${f.message}${nodeRef}`);
   }
 

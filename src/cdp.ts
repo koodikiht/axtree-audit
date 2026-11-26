@@ -20,25 +20,44 @@ export async function fetchLiveCDPAXTree(
   network: NetworkEntry[];
   selectors: Record<number, string>;
 }> {
-  const baseUrl = cdpEndpoint.replace(/\/$/, "");
-  const res = await fetch(`${baseUrl}/json/list`);
-  if (!res.ok) {
-    throw new Error(`Failed to query CDP target list at ${baseUrl}/json/list (HTTP ${res.status})`);
+  let wsUrl = "";
+  let initialTargetUrl = "about:blank";
+
+  if (cdpEndpoint.startsWith("ws://") || cdpEndpoint.startsWith("wss://")) {
+    wsUrl = cdpEndpoint;
+  } else {
+    const baseUrl = cdpEndpoint.replace(/\/$/, "");
+    const res = await fetch(`${baseUrl}/json/list`);
+    if (!res.ok) {
+      throw new Error(`Failed to query CDP target list at ${baseUrl}/json/list (HTTP ${res.status})`);
+    }
+
+    const targets = (await res.json()) as CDPTargetInfo[];
+    const pageCandidates = targets.filter(
+      (t) => t.type === "page" && t.webSocketDebuggerUrl && !t.url.startsWith("devtools://"),
+    );
+    let pageTarget =
+      pageCandidates.find((t) => !t.url.startsWith("chrome://") && t.url !== "about:blank") ??
+      pageCandidates[0];
+
+    if (!pageTarget?.webSocketDebuggerUrl) {
+      let newRes = await fetch(`${baseUrl}/json/new`, { method: "PUT" });
+      if (!newRes.ok) {
+        newRes = await fetch(`${baseUrl}/json/new`);
+      }
+      if (newRes.ok) {
+        pageTarget = (await newRes.json()) as CDPTargetInfo;
+      }
+    }
+
+    if (!pageTarget || !pageTarget.webSocketDebuggerUrl) {
+      throw new Error(`No inspectable page target with webSocketDebuggerUrl found on ${baseUrl}`);
+    }
+
+    wsUrl = pageTarget.webSocketDebuggerUrl;
+    initialTargetUrl = pageTarget.url;
   }
 
-  const targets = (await res.json()) as CDPTargetInfo[];
-  const pageCandidates = targets.filter(
-    (t) => t.type === "page" && t.webSocketDebuggerUrl && !t.url.startsWith("devtools://"),
-  );
-  const pageTarget =
-    pageCandidates.find((t) => !t.url.startsWith("chrome://") && t.url !== "about:blank") ??
-    pageCandidates[0];
-
-  if (!pageTarget || !pageTarget.webSocketDebuggerUrl) {
-    throw new Error(`No inspectable page target with webSocketDebuggerUrl found on ${baseUrl}`);
-  }
-
-  const wsUrl = pageTarget.webSocketDebuggerUrl;
   return await new Promise<{
     pageUrl: string;
     nodes: RawAXNode[];
@@ -56,7 +75,7 @@ export async function fetchLiveCDPAXTree(
       ws.close();
       if (treeReceived) {
         resolve({
-          pageUrl: navigateUrl ?? pageTarget.url,
+          pageUrl: navigateUrl ?? initialTargetUrl,
           nodes: resolvedNodes,
           network: Array.from(networkMap.values()),
           selectors,
@@ -70,7 +89,7 @@ export async function fetchLiveCDPAXTree(
       clearTimeout(timer);
       ws.close();
       resolve({
-        pageUrl: navigateUrl ?? pageTarget.url,
+        pageUrl: navigateUrl ?? initialTargetUrl,
         nodes: resolvedNodes,
         network: Array.from(networkMap.values()),
         selectors,
@@ -112,6 +131,7 @@ export async function fetchLiveCDPAXTree(
         if (msg.method === "Page.frameNavigated" && msg.params) {
           const frame = msg.params.frame as { parentId?: string } | undefined;
           if (!frame?.parentId && !navCleared) {
+            if (navigateUrl) networkMap.clear();
             navCleared = true;
           }
           return;
@@ -157,7 +177,9 @@ export async function fetchLiveCDPAXTree(
         if (navigateUrl && !requestedTree && msg.method === "Page.loadEventFired") {
           requestedTree = true;
           setTimeout(() => {
-            ws.send(JSON.stringify({ id: 2, method: "Accessibility.getFullAXTree", params: {} }));
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ id: 2, method: "Accessibility.getFullAXTree", params: {} }));
+            }
           }, 2200);
           return;
         }
